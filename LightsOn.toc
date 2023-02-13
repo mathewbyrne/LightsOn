@@ -1,0 +1,10 @@
+## Interface: 100005
+## Title: LightsOn
+## Author: Bitmat
+## Version: v0.1
+## Notes: Simple uptime tracker for Holy Paladin things
+## SavedVariables: LightsOn
+
+LightsOn_Auras.lua
+LightsOn_Icon.lua
+LightsOn.lua
