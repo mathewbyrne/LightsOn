@@ -8,3 +8,4 @@
 LightsOn_Auras.lua
 LightsOn_Icon.lua
 LightsOn.lua
+LightsOn_Options.lua

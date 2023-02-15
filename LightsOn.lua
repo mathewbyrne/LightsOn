@@ -21,7 +21,7 @@ function LightsOn.new()
 
     local frame = CreateFrame("Frame", nil, UIParent)
     frame:SetSize((2 * ICON_SIZE) + ICON_PADDING, ICON_SIZE)
-    frame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER", -238, -180)
+    frame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER", -238, -170)
 
     local iconBeacon = LightsOn_Icon.new(SPELL_BEACON_IDS[1], frame, ICON_SIZE)
     iconBeacon.frame:SetPoint("RIGHT", frame, "RIGHT")
