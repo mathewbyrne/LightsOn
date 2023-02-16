@@ -19,31 +19,21 @@ function LightsOn.new()
     local self = {}
     setmetatable(self, LightsOn)
 
-    local frame = CreateFrame("Frame", nil, UIParent)
-    frame:SetSize((2 * ICON_SIZE) + ICON_PADDING, ICON_SIZE)
-    frame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER", -238, -170)
+    self.frame = CreateFrame("Frame", nil, UIParent)
 
-    local iconBeacon = LightsOn_Icon.new(SPELL_BEACON_IDS[1], frame, ICON_SIZE)
-    iconBeacon.frame:SetPoint("RIGHT", frame, "RIGHT")
+    self.iconBeacon = LightsOn_Icon.new(SPELL_BEACON_IDS[1], self.frame)
+    self.iconShield = LightsOn_Icon.new(SPELL_SHIELD_IDS[1], self.frame)
+    self.iconGrace = LightsOn_Icon.new(SPELL_GRACE_IDS[1], self.frame)
+    self.iconJoP = LightsOn_Icon.new(SPELL_JOP_IDS[1], self.frame)
+    self.iconJoL = LightsOn_Icon.new(SPELL_JOL_IDS[1], self.frame)
 
-    local iconShield = LightsOn_Icon.new(SPELL_SHIELD_IDS[1], frame, ICON_SIZE)
-    iconShield.frame:SetPoint("RIGHT", iconBeacon.frame, "LEFT", -ICON_PADDING, 0)
-
-    local iconGrace = LightsOn_Icon.new(SPELL_GRACE_IDS[1], frame, ICON_SIZE)
-    iconGrace.frame:SetPoint("RIGHT", iconShield.frame, "LEFT", -ICON_PADDING, 0)
-
-    local iconJoP = LightsOn_Icon.new(SPELL_JOP_IDS[1], frame, ICON_SIZE)
-    iconJoP.frame:SetPoint("RIGHT", iconGrace.frame, "LEFT", -ICON_PADDING, 0)
-
-    local iconJoL = LightsOn_Icon.new(SPELL_JOL_IDS[1], frame, ICON_SIZE)
-    iconJoL.frame:SetPoint("RIGHT", iconJoP.frame, "LEFT", -ICON_PADDING, 0)
-
-    self.frame = frame
-    self.iconBeacon = iconBeacon
-    self.iconShield = iconShield
-    self.iconGrace = iconGrace
-    self.iconJoL = iconJoL
-    self.iconJoP = iconJoP
+    self:layout({
+        iconSize = ICON_SIZE,
+        iconPadding = ICON_PADDING,
+        x = -238,
+        y = -170,
+        position = "BOTTOMRIGHT",
+    })
 
     self.jolCache = {}
 
@@ -97,8 +87,8 @@ function LightsOn.new()
         self.iconJoL:setProgress(progress)
     end)
 
-    frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-    frame:SetScript("OnEvent", function(_, event)
+    self.frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    self.frame:SetScript("OnEvent", function(_, event)
         if event == "COMBAT_LOG_EVENT_UNFILTERED" then
             _, subEvent, _, sourceGUID, _, _, _, destGUID, _, _, _, spellID = CombatLogGetCurrentEventInfo()
             if (subEvent == "SPELL_AURA_APPLIED" or subEvent == "SPELL_AURA_REFRESH") and spellID == SPELL_JOL_IDS[1] and sourceGUID == UnitGUID("player") then
@@ -116,4 +106,23 @@ function LightsOn.new()
     return self
 end
 
-LightsOn.new()
+function LightsOn:layout(config)
+    self.frame:SetSize((2 * config.iconSize) + config.iconPadding, config.iconSize)
+
+    self.iconBeacon:setSize(config.iconSize)
+    self.iconShield:setSize(config.iconSize)
+    self.iconGrace:setSize(config.iconSize)
+    self.iconJoL:setSize(config.iconSize)
+    self.iconJoP:setSize(config.iconSize)
+
+    self.frame:ClearAllPoints()
+    self.frame:SetPoint(config.position, UIParent, "CENTER", config.x, config.y)
+    
+    self.iconBeacon.frame:SetPoint("RIGHT", self.frame, "RIGHT")
+    self.iconShield.frame:SetPoint("RIGHT", self.iconBeacon.frame, "LEFT", -config.iconPadding, 0)
+    self.iconGrace.frame:SetPoint("RIGHT", self.iconShield.frame, "LEFT", -config.iconPadding, 0)
+    self.iconJoP.frame:SetPoint("RIGHT", self.iconGrace.frame, "LEFT", -config.iconPadding, 0)
+    self.iconJoL.frame:SetPoint("RIGHT", self.iconJoP.frame, "LEFT", -config.iconPadding, 0)
+end
+
+addon.lightsOn = LightsOn.new()
